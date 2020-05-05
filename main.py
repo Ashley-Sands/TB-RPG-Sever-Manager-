@@ -24,9 +24,10 @@ def get_command_data( command ):
         return None
 
 
-server_type = "Standard_B1ms"  # (1 vcpus, 2 GiB memory)    # TODO: change to sys arg
+server_image = "UbuntuLTS"
+server_size = "Standard_B1ms"  # (1 vcpus, 2 GiB memory)    # TODO: change to sys arg
+server_location = None
 locations = [ "uksouth", "ukwest", "westeurope", "northeurope" ]
-location = None
 com = "az vm list-sizes --location {0} {1}"  # 0 = location, 1 = query to refine data
 query = '--query "[].{name:name}"'
 
@@ -41,12 +42,12 @@ for loc in locations:
         print( "ERROR: converting json" )
     elif len( data ) > 0:
         for d in data:
-            if d[ "name" ] == server_type:
+            if d[ "name" ] == server_size:
                 print( "Server is available at", loc )
-                location = loc
+                server_location = loc
                 break
 
-        if location is None:
+        if server_location is None:
             print( "Server is unavailable at", loc, ":(" )
         else:
             break
@@ -54,8 +55,17 @@ for loc in locations:
         print( "No Servers Available?? at", loc )
 
 # now we can spawn a new server at the location if it was available
-if location is None:
+if server_location is None:
     print("Error: can not create server, not available ant any location (", ' ,'.join(locations), ")")
     exit()
 
-print("Spawning Server at", location, ":)")
+print("Spawning Server at", server_location, ":)")
+
+create_vm = "az vm create -n auto_created_vm_0 -g rpg_scale_services --location {0} --size {1} --image {2}"
+create_vm = create_vm.format( server_location, server_size, server_image )
+
+print( create_vm )
+
+data = get_command_data( create_vm )
+
+print( data )
