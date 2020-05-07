@@ -1,7 +1,22 @@
-import json, os, sys, subprocess
+import json, os, sys, subprocess, re
 
 impo = "import os\n"
 
+def get_sys_argv():
+    """Get all argv's that start with '--'
+        and return them in a dict
+    """
+    argv = ' '.join(sys.argv)
+
+    match = re.findall( "(--[\w\d_]*[ ]*[\w\d_]*)\w*", argv )
+    argvs = {}
+
+    for m in match:
+        v = m.split(" ")
+        argvs[v[0][2:]] = v[1]
+
+    print(argvs)
+    return argvs
 
 def get_command_data( command ):
     command = "os.system( '" + command + "' )"
@@ -24,13 +39,31 @@ def get_command_data( command ):
         return None
 
 
-server_image = "UbuntuLTS"
-server_size = "Standard_B1ms"  # (1 vcpus, 2 GiB memory)    # TODO: change to sys arg
-server_location = None
-locations = [ "uksouth", "ukwest", "westeurope", "northeurope" ]
+server = {
+    "group": None,
+    "image": "UbuntuLTS",
+    "size": "Standard_B1s",
+    "location": None
+}
+
+locations = [ "uksouth", "ukwest", "westeurope", "northeurope", "centralus" ]
 com = "az vm list-sizes --location {0} {1}"  # 0 = location, 1 = query to refine data
 query = '--query "[].{name:name}"'
 
+# update the default values if they where set in argv
+
+sys_argv = get_sys_argv()
+
+if "group" not in sys_argv:
+    print( "Error: group is a required param" )
+    exit()
+
+for key in server:
+    if key in sys_argv:
+        server[key] = sys_argv[key]
+
+print("RG:", server["group"], "image", server["image"], "size", server["size"])
+print("="*25)
 
 # query each of the location for an available server of server_type
 for loc in locations:
@@ -42,12 +75,12 @@ for loc in locations:
         print( "ERROR: converting json" )
     elif len( data ) > 0:
         for d in data:
-            if d[ "name" ] == server_size:
+            if d[ "name" ] == server["size"]:
                 print( "Server is available at", loc )
-                server_location = loc
+                server["location"] = loc
                 break
 
-        if server_location is None:
+        if server["location"] is None:
             print( "Server is unavailable at", loc, ":(" )
         else:
             break
@@ -55,14 +88,14 @@ for loc in locations:
         print( "No Servers Available?? at", loc )
 
 # now we can spawn a new server at the location if it was available
-if server_location is None:
-    print("Error: can not create server, not available ant any location (", ' ,'.join(locations), ")")
+if server["location"] is None:
+    print("Error: can not create server, not available ant any location (", ', '.join(locations), ")")
     exit()
 
-print("Spawning Server at", server_location, ":)")
+print("Spawning Server at", server["location"], ":)")
 
-create_vm = "az vm create -n auto_created_vm_0 -g rpg_scale_services --location {0} --size {1} --image {2}"
-create_vm = create_vm.format( server_location, server_size, server_image )
+create_vm = "az vm create -n auto_created_vm_0 -g {3} --location {0} --size {1} --image {2}"
+create_vm = create_vm.format( server["location"], server["size"], server["image"], server["group"] )
 
 print( create_vm )
 
