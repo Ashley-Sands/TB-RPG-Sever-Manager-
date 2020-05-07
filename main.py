@@ -48,10 +48,9 @@ server = {
 
 locations = [ "uksouth", "ukwest", "westeurope", "northeurope", "centralus" ]
 com = "az vm list-sizes --location {0} {1}"  # 0 = location, 1 = query to refine data
-query = '--query "[].{name:name}"'
+query = '--query "[].{name}"'
 
-# update the default values if they where set in argv
-
+# update the server values if they where set in argv
 sys_argv = get_sys_argv()
 
 if "group" not in sys_argv:
@@ -94,8 +93,9 @@ if server["location"] is None:
 
 print("Spawning Server at", server["location"], ":)")
 
-create_vm = "az vm create -n auto_created_vm_0 -g {3} --location {0} --size {1} --image {2}"
-create_vm = create_vm.format( server["location"], server["size"], server["image"], server["group"] )
+query = '--query "[].{pIp:privateIpAddress, Ip:publicIpAddress}"'
+create_vm = "az vm create -n auto_created_vm_0 -g {3} --location {0} --size {1} --image {2} {4}"
+create_vm = create_vm.format( server["location"], server["size"], server["image"], server["group"], query )
 
 print( create_vm )
 
