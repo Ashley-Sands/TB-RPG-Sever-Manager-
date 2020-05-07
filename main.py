@@ -93,9 +93,8 @@ if server["location"] is None:
 
 print("Spawning Server at", server["location"], ":)")
 
-query = '--query "[].{pIp:privateIpAddress, Ip:publicIpAddress}"'
-create_vm = "az vm create -n auto_created_vm_0 -g {3} --location {0} --size {1} --image {2} {4}"
-create_vm = create_vm.format( server["location"], server["size"], server["image"], server["group"], query )
+create_vm = "az vm create -n auto_created_vm_0 -g {3} --location {0} --size {1} --image {2}"
+create_vm = create_vm.format( server["location"], server["size"], server["image"], server["group"] )
 
 print( create_vm )
 
