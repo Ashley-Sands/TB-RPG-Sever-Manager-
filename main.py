@@ -48,7 +48,7 @@ server = {
 
 locations = [ "uksouth", "ukwest", "westeurope", "northeurope", "centralus" ]
 com = "az vm list-sizes --location {0} {1}"  # 0 = location, 1 = query to refine data
-query = '--query "[].{name}"'
+query = '--query "[].{name:name}"'
 
 # update the server values if they where set in argv
 sys_argv = get_sys_argv()
