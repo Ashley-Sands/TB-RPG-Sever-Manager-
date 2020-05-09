@@ -1,7 +1,5 @@
 import json, os, sys, subprocess, re
 
-impo = "import os\n"
-
 def get_sys_argv():
     """Get all argv's that start with '--'
         and return them in a dict
@@ -19,6 +17,8 @@ def get_sys_argv():
     return argvs
 
 def get_command_data( command ):
+
+    impo = "import os;"
     command = "os.system( '" + command + "' )"
 
     proc = subprocess.Popen( [ 'python', '-c', impo + command ], stdout=subprocess.PIPE )
@@ -100,4 +100,4 @@ print( create_vm )
 
 data = get_command_data( create_vm )
 
-print( data )
+
