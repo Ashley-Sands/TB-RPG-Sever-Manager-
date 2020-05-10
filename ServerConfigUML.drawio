@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-05-10T02:18:10.943Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36" etag="ez8Ib_so9UzbQEZ9Vi7V" version="13.0.9" type="github">
+<mxfile host="app.diagrams.net" modified="2020-05-10T02:19:56.471Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36" etag="-1CkHAaMB3-ZIH5mLtjB" version="13.0.9" type="github">
   <diagram id="LB_8y4WnZ8luROFJJqW4" name="Page-1">
     <mxGraphModel dx="2031" dy="1089" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -146,7 +146,7 @@
         <mxCell id="mE1LJT338FbpaoRDe8dP-143" value="Send connected clients a list of active lobbies" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=11;" vertex="1" parent="mE1LJT338FbpaoRDe8dP-10">
           <mxGeometry x="120" y="260.6666666666667" width="90" height="68" as="geometry" />
         </mxCell>
-        <mxCell id="mE1LJT338FbpaoRDe8dP-20" value="Top-Tier Private Network" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=white;fontStyle=1;fontSize=20;" vertex="1" parent="ET-FOYwZOfEWecPwwmMv-4">
+        <mxCell id="mE1LJT338FbpaoRDe8dP-20" value="Deployment Private Network" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=white;fontStyle=1;fontSize=20;" vertex="1" parent="ET-FOYwZOfEWecPwwmMv-4">
           <mxGeometry x="590" y="150" width="1030" height="50" as="geometry" />
         </mxCell>
         <mxCell id="mE1LJT338FbpaoRDe8dP-28" value="" style="shape=mxgraph.gcp.compute.container_registry;html=1;fillColor=#4387FD;gradientColor=#4683EA;strokeColor=none;verticalLabelPosition=bottom;verticalAlign=top;align=center;" vertex="1" parent="ET-FOYwZOfEWecPwwmMv-4">
