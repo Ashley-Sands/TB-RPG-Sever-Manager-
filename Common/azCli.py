@@ -19,18 +19,19 @@ class az:
                                 Only used if background is true. the callback is invoked
                                 when the command finishes execution.
                                 if data is None an error occurred
-        :return:                if not background, returns json data as dict, if error None
+        :return:                if not background, returns tuple (event_id, json data as dict), if error None
                                 if is  background, returns the event id.
                                 use callback to get data for event_id
                                 once executions has finished.
         """
 
+        self.event_id += 1
+
         if background:
-            self.event_id += 1
             threading.Thread( target=self.__background_invoke, args=(command, self.event_id, callback))
             return self.event_id
         else:
-            return self.__invoke_az_command( command )
+            return self.event_id, self.__invoke_az_command( command )
 
     def __background_invoke( self, command, event_id, callback ):
 
