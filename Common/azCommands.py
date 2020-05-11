@@ -118,4 +118,4 @@ class Command:
             if p in params_str:
                 params_str[p] = self.params[p].format(params[p])
 
-        return self.command.format(**params_str)
+        return re.sub("[ ]+", " ", self.command.format(**params_str) )
