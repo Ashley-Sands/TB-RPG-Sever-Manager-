@@ -1,4 +1,5 @@
 import json, os, sys, subprocess, re
+import Common.azCommands as azCommands
 
 # notes
 # locations: "uksouth", "ukwest", "westeurope", "northeurope", "centralus"
@@ -27,3 +28,8 @@ def get_sys_argv():
     print(argvs)
     return argvs
 
+## testing.
+
+azcom = azCommands.azCommands()
+azcom.add("test", "az vm create --location {} -g --size {  fdgs gf gfds} --image { f4fa }")
+print( azcom.get("test", image="ubuntu", bop="gfds") )

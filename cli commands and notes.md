@@ -1,3 +1,7 @@
+# Things, that we must be thorughtfull of, otherwise this could all go horribly wrong
+# and im not made of money, in fact i only have my $100 free azure credits.
+
+
 # Usfull RPG network CLI commands
 
 ## Create a DB Server 
