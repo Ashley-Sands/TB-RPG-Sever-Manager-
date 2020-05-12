@@ -40,7 +40,7 @@ def event_compleat(event_id, data):
 def count_results(event_id, data):
 
     if data and len( data ) > 0:
-        event_id = az.invoke( "list containers", background=True, bg_callback=event_compleat, **DEFAULT_VM,
+        event_id = az.invoke( "show containers", background=True, bg_callback=event_compleat, **DEFAULT_VM,
                               query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, '
                                     'state:containers[0].instanceView.state, p_state:provisioningState, tags:tags}"' )
 
@@ -89,6 +89,6 @@ if __name__ == "__main__":
 
     print(event_id, "has been sent")
 
-    event_id = az.invoke("show containers", bg_callback=count_results, **DEFAULT_VM, query='"[].{name:name}"')
+    event_id = az.invoke("list containers", bg_callback=count_results, **DEFAULT_VM, query='"[].{name:name}"')
 
     print(event_id, "has been sent")
