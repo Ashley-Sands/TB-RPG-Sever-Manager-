@@ -61,4 +61,5 @@ if __name__ == "__main__":
     hosts = [] # list of all our current host ie. vm's, containers and databases
     print(DEFAULT_VM)
     # once we first connect find if we already have any containers running
-    event_id, response = az.invoke("list vms", background=False, **DEFAULT_VM, query='"{name:name, location:location}"')
+    event_id, response = az.invoke("list vms", background=False, **DEFAULT_VM,
+                                   query='"{name:name, location:location, ip:privateIps, state:powerState}"')
