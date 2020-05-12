@@ -39,12 +39,12 @@ if __name__ == "__main__":
     az = azCommands.azCommands()
 
     # setup the commands
-    az.add("new group", "az group create --name {} --location {}")
-    az.add("new vm", "az vm create --name {} --resource-group {} -p --location {} --size {Standard_b1s} --image {UbuntuLTS}")
+    az.add("new group", "az group create --name {} --location {} --tags {}")
+    az.add("new vm", "az vm create --name {} --resource-group {} -p --location {} --size {Standard_b1s} --image {UbuntuLTS} --tags {}")
 
     az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
 
-    az.add("new container", "az container create --resource-group {} --size {}")
+    az.add("new container", "az container create --resource-group {} --size {} --tags {}")
     az.add("list containers", "az container list --resource-group {}")
     # add some aliases
     az.add_param_alias("new vm", "resource-group", "group")
@@ -64,7 +64,9 @@ if __name__ == "__main__":
     hosts = [] # list of all our current host ie. vm's, containers and databases
     print(DEFAULT_VM)
     # once we first connect find if we already have any containers running
-    event_id = az.invoke("list vms", background=True, **DEFAULT_VM,
-                         query='"[].{name:name, location:location, ip:privateIps, state:powerState}"')
+    event_id = az.invoke("list vms", background=True, callback=event_compleat, **DEFAULT_VM,
+                         query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
+    print(event_id, "has been sent")
+    event_id = az.invoke("list containers", background=True, callback=event_compleat, **DEFAULT_VM)
 
     print(event_id, "has been sent")
