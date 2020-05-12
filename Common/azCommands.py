@@ -42,7 +42,7 @@ class azCommands():
 
             # if the length is more than one we need to extract the param name and default value
             if len(param) > 1:
-                param_name = re.sub("^--| +", "", param[0])  
+                param_name = re.sub("^--| +", "", param[0])
                 param_default = re.sub("[\{\} ]+", "", param[1])
                 com[i] = "{"+param_name+"}"
                 extracted_params.append( (param_name, param_default) )
@@ -76,10 +76,11 @@ class azCommands():
 
     def invoke( self, command_name, background=True, callback=None, **params ):
         """Executes the command om the az cli"""
-        return self.cli.invoke(self.get( command_name,
-                                         background=background,
-                                         callback=callback,
-                                         **params ))
+        print("---------------------------------------", background)
+        return self.cli.invoke(self.get( command_name, **params ),
+                               background=background,
+                               callback=callback,
+                               )
 
 
 class Command:
