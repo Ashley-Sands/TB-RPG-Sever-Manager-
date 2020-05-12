@@ -41,13 +41,15 @@ if __name__ == "__main__":
     az = azCommands.azCommands()
 
     # setup the commands
+    # resource groups
     az.add("new group", "az group create --name {} --location {} --tags {}")
+    # vms
     az.add("new vm", "az vm create --name {} --resource-group {} -p --location {} --size {Standard_b1s} --image {UbuntuLTS} --tags {}")
-
     az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
-
+    # containers
     az.add("new container", "az container create --resource-group {} --size {} --tags {}")
-    az.add("list containers", "az container list --resource-group {} --query {} --output {json}")
+    az.add("list containers", "az container show --ids $(az container list -g test --query '[].id' -o tsv) --query {} --output {json}")
+
     # add some aliases
     az.add_param_alias("new vm", "resource-group", "group")
     az.add_param_alias("list vms", "resource-group", "group")
@@ -70,6 +72,7 @@ if __name__ == "__main__":
                          query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
     print(event_id, "has been sent")
     event_id = az.invoke("list containers", background=True, callback=event_compleat, **DEFAULT_VM,
-                         query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, tags:tags}"')
+                         query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, '
+                               'state:containers[0].instanceView.state, p_state:provisioningState, tags:tags}"')
 
     print(event_id, "has been sent")

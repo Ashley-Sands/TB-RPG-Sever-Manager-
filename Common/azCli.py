@@ -49,9 +49,10 @@ class az:
 
         # python to be executed in sub process
         impo = "import os;"
-        command = "os.system( '" + command + "' )"
+        command = "command='{0}';".format( command )
+        cmd = "os.system( command )"
 
-        proc = subprocess.Popen( [ 'python', '-c', impo + command ], stdout=subprocess.PIPE )
+        proc = subprocess.Popen( [ 'python', '-c', impo + command + cmd], stdout=subprocess.PIPE )
 
         # retrieve the outcome of the subprocess
         json_str = ""
