@@ -66,15 +66,15 @@ if __name__ == "__main__":
 
     hosts = {} # dict of list, key: hostObj.TYPE value list of hostObjects
 
-    print("="*25, "\ninitial setup up complete\n", "="*25)
+    print("="*25, "initial setup up complete", "="*25, sep="\n")
 
     # once we first connect find if we already have any containers running
-    event_id = az.invoke("list vms", background=False, callback=event_compleat, **DEFAULT_VM,
+    event_id = az.invoke("list vms", background=True, bg_callback=event_compleat, **DEFAULT_VM,
                          query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
 
     print(event_id, "has been sent")
 
-    event_id = az.invoke("list containers", background=True, callback=event_compleat, **DEFAULT_VM,
+    event_id = az.invoke("list containers", background=True, bg_callback=event_compleat, **DEFAULT_VM,
                          query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, '
                                'state:containers[0].instanceView.state, p_state:provisioningState, tags:tags}"')
 

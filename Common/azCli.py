@@ -7,13 +7,13 @@ class az:
     def __init__( self ):
         self.event_id = -1
 
-    def invoke( self, command, background=True, callback=None ):
+    def invoke( self, command, background=True, bg_callback=None ):
         """ invokes a command on the azure CLI
 
         :param command:         command to be executed
         :param background:      should the command be executed in the background
                                 if false waits for command to finish executions
-        :param callback:        (optional) callback must have paras
+        :param bg_callback:     (optional) callback must have paras
                                     - event_id (int)
                                     - data (type dict)
                                 Only used if background is true. the callback is invoked
@@ -29,7 +29,7 @@ class az:
 
         if background:
             threading.Thread( target=self.__background_invoke,
-                              args=(command, self.event_id, callback)).start()
+                              args=(command, self.event_id, bg_callback) ).start()
             return self.event_id
         else:
             return self.event_id, self.__invoke_az_command( command )
