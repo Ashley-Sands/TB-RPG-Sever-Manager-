@@ -1,18 +1,19 @@
 import json, os, sys, subprocess, re
 import Common.azCommands as azCommands
-from Common.globals import GlobalConfig as Config
-
+import Common.globals as global_config
+consts = global_config.Global
 
 # notes
 # locations: "uksouth", "ukwest", "westeurope", "northeurope", "centralus"
 # my standard vm config
-# server = {
-#    "group": None,
-#    "image": "UbuntuLTS",
-#    "size": "Standard_B1s",
-#    "location": None
-# }
-#
+
+DEFAULT_VM = {
+    "group": "RPG_Network_WE",
+    "image": "UbuntuLTS",
+    "size": "Standard_B1s",
+    "location": "westeurope"
+}
+
 
 def get_sys_argv():
     """Get all argv's that start with '--'
@@ -55,5 +56,6 @@ if __name__ == "__main__":
     # See the plan in "cli commands and notes.md" for more info
 
     hosts = [] # list of all our current host ie. vm's, containers and databases
-
+    print(DEFAULT_VM)
     # once we first connect find if we already have any containers running
+    event_id, response = az.invoke("list vms", background=False, **DEFAULT_VM)
