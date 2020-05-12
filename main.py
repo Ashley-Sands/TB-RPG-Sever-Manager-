@@ -43,6 +43,7 @@ if __name__ == "__main__":
     az.add("list containers", "az container list --resource-group {}")
     # add some aliases
     az.add_param_alias("new vm", "resource-group", "group")
+    az.add_param_alias("list vms", "resource-group", "group")
     az.add_param_alias("new container", "resource-group", "group")
 
     print( az.get("new container", group="bbbb", size="abc") )

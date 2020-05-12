@@ -69,6 +69,7 @@ class az:
 
         # convert the json string into a dict.
         try:
+            print(json_str)
             return json.loads( json_str )
         except Exception as e:
             print("Error:", e)
