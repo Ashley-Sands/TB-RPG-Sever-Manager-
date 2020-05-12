@@ -28,7 +28,8 @@ class az:
         self.event_id += 1
 
         if background:
-            threading.Thread( target=self.__background_invoke, args=(command, self.event_id, callback))
+            threading.Thread( target=self.__background_invoke,
+                              args=(command, self.event_id, callback)).start()
             return self.event_id
         else:
             return self.event_id, self.__invoke_az_command( command )
