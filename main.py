@@ -65,7 +65,8 @@ if __name__ == "__main__":
     #
     # See the plan in "cli commands and notes.md" for more info
 
-    hosts = [] # list of all our current host ie. vm's, containers and databases
+    hosts = {} # dict of list, key: hostObj.TYPE value list of hostObjects
+
     print(DEFAULT_VM)
     # once we first connect find if we already have any containers running
     event_id = az.invoke("list vms", background=True, callback=event_compleat, **DEFAULT_VM,
