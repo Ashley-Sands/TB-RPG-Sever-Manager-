@@ -134,7 +134,6 @@ class Command:
                 params_str[p] = self.params[p].format(params[p])
             elif p in self.param_alias:
                 alias_name = self.param_alias[p]
-                print(p, self.param_alias, self.params, '\n', self.template_params_str)
 
                 if alias_name in params_str:
                     params_str[alias_name] = \
@@ -142,7 +141,7 @@ class Command:
                         format(params[p])
 
             else:
-                print(p, self.param_alias)
+                print("Warning: Ignoring", p, "is not a param nor an alias for command: ", self.command)
 
         return self.command.format(**params_str)
         # return re.sub("[ ]+", " ", self.command.format(**params_str) )

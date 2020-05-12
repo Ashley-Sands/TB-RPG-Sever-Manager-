@@ -56,8 +56,6 @@ if __name__ == "__main__":
     az.add_param_alias("new container", "resource-group", "group")
     az.add_param_alias("list containers", "resource-group", "group")
 
-    print( az.get("new container", group="bbbb", size="abc") )
-
     # the plan, is to orchestrate the tb_rpg game network
     # the network is made up of a backend database, and
     # lobby and game instance containers (managed)
@@ -68,11 +66,14 @@ if __name__ == "__main__":
 
     hosts = {} # dict of list, key: hostObj.TYPE value list of hostObjects
 
-    print(DEFAULT_VM)
+    print("="*25, "\ninitial setup up complete\n", "="*25)
+
     # once we first connect find if we already have any containers running
     event_id = az.invoke("list vms", background=False, callback=event_compleat, **DEFAULT_VM,
                          query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
+
     print(event_id, "has been sent")
+
     event_id = az.invoke("list containers", background=True, callback=event_compleat, **DEFAULT_VM,
                          query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, '
                                'state:containers[0].instanceView.state, p_state:provisioningState, tags:tags}"')
