@@ -14,6 +14,8 @@ DEFAULT_VM = {
     "location": "westeurope"
 }
 
+TAG_SPAWNER = "spawner=cli_auto"
+TAG_MNET    = "RPG"
 
 def get_sys_argv():
     """Get all argv's that start with '--'
@@ -68,6 +70,6 @@ if __name__ == "__main__":
                          query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
     print(event_id, "has been sent")
     event_id = az.invoke("list containers", background=True, callback=event_compleat, **DEFAULT_VM,
-                         query='"[].{name:name, location:location, ip:ipAddress.ip, tags:tags}"')
+                         query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, tags:tags}"')
 
     print(event_id, "has been sent")
