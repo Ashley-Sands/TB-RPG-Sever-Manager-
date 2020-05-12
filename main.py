@@ -45,7 +45,7 @@ if __name__ == "__main__":
     az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
 
     az.add("new container", "az container create --resource-group {} --size {} --tags {}")
-    az.add("list containers", "az container list --resource-group {}")
+    az.add("list containers", "az container list --resource-group {} --query {} --output {json}")
     # add some aliases
     az.add_param_alias("new vm", "resource-group", "group")
     az.add_param_alias("list vms", "resource-group", "group")
@@ -67,6 +67,7 @@ if __name__ == "__main__":
     event_id = az.invoke("list vms", background=True, callback=event_compleat, **DEFAULT_VM,
                          query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
     print(event_id, "has been sent")
-    event_id = az.invoke("list containers", background=True, callback=event_compleat, **DEFAULT_VM)
+    event_id = az.invoke("list containers", background=True, callback=event_compleat, **DEFAULT_VM,
+                         query='"[].{name:name, location:location, ip:ipAddress.ip, tags:tags}"')
 
     print(event_id, "has been sent")
