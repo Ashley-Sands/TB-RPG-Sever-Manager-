@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # setup the commands
     az.add("new group", "az group create --name {} --location {}")
     az.add("new vm", "az vm create --name {} --resource-group {} -p --location {} --size {Standard_b1s} --image {UbuntuLTS}")
-    az.add("list vms", "az vm create --resource-group {}")
+    az.add("list vms", "az vm list --resource-group {}")
     az.add("new container", "az container create --resource-group {} --size {}")
     az.add("list containers", "az container list --resource-group {}")
     # add some aliases

@@ -76,8 +76,9 @@ class azCommands():
 
     def invoke( self, command_name, background=True, callback=None, **params ):
         """Executes the command om the az cli"""
-        print("---------------------------------------", background)
-        return self.cli.invoke(self.get( command_name, **params ),
+        command = self.get( command_name, **params )
+        print("command to send", command)
+        return self.cli.invoke(command,
                                background=background,
                                callback=callback,
                                )
