@@ -65,6 +65,6 @@ if __name__ == "__main__":
     print(DEFAULT_VM)
     # once we first connect find if we already have any containers running
     event_id = az.invoke("list vms", background=True, **DEFAULT_VM,
-                         query='"{name:name, location:location, ip:privateIps, state:powerState}"')
+                         query='"[].{name:name, location:location, ip:privateIps, state:powerState}"')
 
     print(event_id, "has been sent")
