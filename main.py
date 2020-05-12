@@ -39,7 +39,7 @@ if __name__ == "__main__":
     az.add("new group", "az group create --name {} --location {}")
     az.add("new vm", "az vm create --name {} --resource-group {} -p --location {} --size {Standard_b1s} --image {UbuntuLTS}")
 
-    az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {}')
+    az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
 
     az.add("new container", "az container create --resource-group {} --size {}")
     az.add("list containers", "az container list --resource-group {}")
@@ -61,4 +61,4 @@ if __name__ == "__main__":
     hosts = [] # list of all our current host ie. vm's, containers and databases
     print(DEFAULT_VM)
     # once we first connect find if we already have any containers running
-    event_id, response = az.invoke("list vms", background=False, **DEFAULT_VM ) #, query='"[].{name:name, location:location}"')
+    event_id, response = az.invoke("list vms", background=False, **DEFAULT_VM, query="'{name:name, location:location}'")
