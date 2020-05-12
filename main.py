@@ -37,6 +37,18 @@ def event_compleat(event_id, data):
 
     print(event_id, ":", data)
 
+def count_results(event_id, data):
+
+    if data and len( data ) > 0:
+        event_id = az.invoke( "list containers", background=True, bg_callback=event_compleat, **DEFAULT_VM,
+                              query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, '
+                                    'state:containers[0].instanceView.state, p_state:provisioningState, tags:tags}"' )
+
+        print( event_id, "has been sent" )
+    else:
+        print("No Results for event:", event_id)
+
+
 if __name__ == "__main__":
     az = azCommands.azCommands()
 
@@ -48,13 +60,16 @@ if __name__ == "__main__":
     az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
     # containers
     az.add("new container", "az container create --resource-group {} --size {} --tags {}")
-    az.add("list containers", 'az container show --ids $(az container list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
+
+    az.add("list container", "az container list --resource-group {} --query {} --output {json}")
+    az.add("show containers", 'az container show --ids $(az container list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
 
     # add some aliases
     az.add_param_alias("new vm", "resource-group", "group")
     az.add_param_alias("list vms", "resource-group", "group")
     az.add_param_alias("new container", "resource-group", "group")
     az.add_param_alias("list containers", "resource-group", "group")
+    az.add_param_alias("show containers", "resource-group", "group")
 
     # the plan, is to orchestrate the tb_rpg game network
     # the network is made up of a backend database, and
@@ -74,8 +89,6 @@ if __name__ == "__main__":
 
     print(event_id, "has been sent")
 
-    event_id = az.invoke("list containers", background=True, bg_callback=event_compleat, **DEFAULT_VM,
-                         query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, '
-                               'state:containers[0].instanceView.state, p_state:provisioningState, tags:tags}"')
+    event_id = az.invoke("show containers", bg_callback=count_results, **DEFAULT_VM, query='"[].{name:name}"')
 
     print(event_id, "has been sent")
