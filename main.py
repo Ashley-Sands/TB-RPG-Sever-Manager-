@@ -48,7 +48,7 @@ if __name__ == "__main__":
     az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
     # containers
     az.add("new container", "az container create --resource-group {} --size {} --tags {}")
-    az.add("list containers", "az container show --ids $(az container list -g test --query '[].id' -o tsv) --query {} --output {json}")
+    az.add("list containers", 'az container show --ids $(az container list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
 
     # add some aliases
     az.add_param_alias("new vm", "resource-group", "group")

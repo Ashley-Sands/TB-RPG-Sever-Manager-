@@ -49,7 +49,7 @@ class az:
 
         # python to be executed in sub process
         impo = "import os;"
-        command = "command='{0}';".format( command.replace("'", '"') )  # make sure the correct " or ' was used
+        command = "command='{0}';".format( command ) #command.replace("'", '"') )  # make sure the correct " or ' was used
         cmd = "os.system( 'command' )"
 
         proc = subprocess.Popen( [ 'python', '-c', impo + command + cmd], stdout=subprocess.PIPE )
