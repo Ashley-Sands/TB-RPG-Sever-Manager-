@@ -54,6 +54,7 @@ if __name__ == "__main__":
     az.add_param_alias("new vm", "resource-group", "group")
     az.add_param_alias("list vms", "resource-group", "group")
     az.add_param_alias("new container", "resource-group", "group")
+    az.add_param_alias("list containers", "resource-group", "group")
 
     print( az.get("new container", group="bbbb", size="abc") )
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
 
     print(DEFAULT_VM)
     # once we first connect find if we already have any containers running
-    event_id = az.invoke("list vms", background=True, callback=event_compleat, **DEFAULT_VM,
+    event_id = az.invoke("list vms", background=False, callback=event_compleat, **DEFAULT_VM,
                          query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
     print(event_id, "has been sent")
     event_id = az.invoke("list containers", background=True, callback=event_compleat, **DEFAULT_VM,
