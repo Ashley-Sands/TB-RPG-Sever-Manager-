@@ -61,7 +61,7 @@ if __name__ == "__main__":
     # containers
     az.add("new container", "az container create --resource-group {} --size {} --tags {}")
 
-    az.add("list container", "az container list --resource-group {} --query {} --output {json}")
+    az.add("list containers", "az container list --resource-group {} --query {} --output {json}")
     az.add("show containers", 'az container show --ids $(az container list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
 
     # add some aliases
