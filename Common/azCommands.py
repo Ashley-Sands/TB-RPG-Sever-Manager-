@@ -34,7 +34,7 @@ class azCommands():
         extracted_params = [] # list of tuples (param_name, default_value)
 
         # extract the params and replace with '{param_name}' ready for re-build
-        com = re.split("(--\w{2,}\s*\{[\s]*[-_\w\d\s]*[\s]*\})", command) # split command into sub sections
+        com = re.split("(-{2,}[\w-]{2,}\s*\{[\s]*[-_\w\d]*[\s]*\})", command) # split command into sub sections
 
         # replace the params we are interested in with {param name}
         for i in range(0, len(com)):
@@ -42,7 +42,7 @@ class azCommands():
 
             # if the length is more than one we need to extract the param name and default value
             if len(param) > 1:
-                param_name = re.sub("[ -]+", "", param[0])
+                param_name = re.sub("^--| +", "", param[0])  
                 param_default = re.sub("[\{\} ]+", "", param[1])
                 com[i] = "{"+param_name+"}"
                 extracted_params.append( (param_name, param_default) )
@@ -50,6 +50,11 @@ class azCommands():
         command_str = ' '.join(com).replace("  ", " ")
 
         self.commands[command_name] = Command(command_str, extracted_params)
+
+    def add_param_alias( self, command_name, param_name, alias_name ):
+
+        if command_name in self.commands:
+            self.commands[command_name].param_alias[alias_name] = param_name
 
     def get( self, command_name, **params ):
         """ Rebuild the command for command_name, with only the supplied
@@ -102,6 +107,14 @@ class Command:
         # build the param definitions and template
         for p in params:
             param_name, param_default = p
+
+            # if the param name is illegal create an alias
+            if re.search( "\w-\w", param_name ) is not None:
+                alias_name = param_name.replace("-", "")
+                self.param_alias[alias_name] = param_name
+                print("found illegal function param name in command:", ' '.join(command.split(" ")[:3])  ,
+                      "creating alias: ", alias_name, "for", param_name)
+
             self.params[param_name] = "--"+param_name+" {0}"
 
             self.template_params_str[param_name] = ""
@@ -117,5 +130,17 @@ class Command:
         for p in params:
             if p in params_str:
                 params_str[p] = self.params[p].format(params[p])
+            elif p in self.param_alias:
+                alias_name = self.param_alias[p]
+                print(p, self.param_alias, self.params, '\n', self.template_params_str)
 
-        return re.sub("[ ]+", " ", self.command.format(**params_str) )
+                if alias_name in params_str:
+                    params_str[alias_name] = \
+                        self.params[alias_name].\
+                        format(params[p])
+
+            else:
+                print(p, self.param_alias)
+
+        return self.command.format(**params_str)
+        # return re.sub("[ ]+", " ", self.command.format(**params_str) )
