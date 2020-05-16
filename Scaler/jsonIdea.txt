@@ -1,0 +1,21 @@
+{
+    "new vm": 								# command name
+    [										# command, the command is build in order
+        "az vm create",
+        {
+            "resource-group": "rpg_net",	# Param name, param default value
+            "name": "game-0",
+            "location": "uksouth",
+            "size": "b1s",
+            "image": "UbuntuLTS",
+            "tags": "",
+            "@alais":						# alais for params (use in the invoke function params)
+            {
+                "resource-group": "group"
+            }
+        },
+        "-o table"
+    ] # so this would output 'az vm create --resource-group rpg_net --name game-0 --location uksouth --size b1s --image UbuntuLTS -o table'
+}
+
+'{"new vm": ["az vm create",{"resource-group": "rpg_net", "name": "game-0","location": "uksouth","size": "b1s","image": "UbuntuLTS","tags": "", "@alais": {	"resource-group": "group"}},"-o table"]}'
