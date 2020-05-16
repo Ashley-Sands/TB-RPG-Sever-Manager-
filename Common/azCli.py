@@ -4,8 +4,7 @@ import json
 
 class az:
 
-    def __init__( self ):
-        self.event_id = -1
+    event_id = -1
 
     def invoke( self, command, background=True, bg_callback=None ):
         """ invokes a command on the azure CLI
@@ -20,19 +19,20 @@ class az:
                                 when the command finishes execution.
                                 if data is None an error occurred
         :return:                if not background, returns tuple (event_id, json data as dict), if error None
-                                if is  background, returns the event id.
+                                if is  background, returns tuple (event id, thread).
                                 use callback to get data for event_id
                                 once executions has finished.
         """
 
-        self.event_id += 1
+        az.event_id += 1
 
         if background:
-            threading.Thread( target=self.__background_invoke,
-                              args=(command, self.event_id, bg_callback) ).start()
-            return self.event_id
+            thread = threading.Thread( target=self.__background_invoke,
+                                       args=(command, az.event_id, bg_callback) )
+            thread.start()
+            return az.event_id, thread
         else:
-            return self.event_id, self.__invoke_az_command( command )
+            return az.event_id, self.__invoke_az_command( command )
 
     def __background_invoke( self, command, event_id, callback ):
 

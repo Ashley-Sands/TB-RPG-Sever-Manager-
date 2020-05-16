@@ -1,7 +1,8 @@
 import Common.azCli as azCli
 import re
 
-class azCommands():
+
+class AzCommands:
 
     def __init__( self ):
 

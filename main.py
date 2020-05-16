@@ -50,7 +50,8 @@ def count_results(event_id, data):
 
 
 if __name__ == "__main__":
-    az = azCommands.azCommands()
+
+    az = azCommands.AzCommands()
 
     # setup the commands
 
