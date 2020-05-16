@@ -53,14 +53,16 @@ if __name__ == "__main__":
     az = azCommands.azCommands()
 
     # setup the commands
+
     # resource groups
     az.add("new group", "az group create --name {} --location {} --tags {}")
+
     # vms
     az.add("new vm", "az vm create --name {} --resource-group {} -p --location {} --size {Standard_b1s} --image {UbuntuLTS} --tags {}")
     az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
+
     # containers
     az.add("new container", "az container create --resource-group {} --size {} --tags {}")
-
     az.add("list containers", "az container list --resource-group {} --query {} --output {json}")
     az.add("show containers", 'az container show --ids $(az container list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
 
@@ -84,10 +86,10 @@ if __name__ == "__main__":
     print("="*25, "initial setup up complete", "="*25, sep="\n")
 
     # once we first connect find if we already have any containers running
-    event_id = az.invoke("list vms", background=True, bg_callback=event_compleat, **DEFAULT_VM,
-                         query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
+    # event_id = az.invoke("list vms", background=True, bg_callback=event_compleat, **DEFAULT_VM,
+    #                      query='"[].{name:name, location:location, ip:privateIps, state:powerState, tags:tags}"')
 
-    print(event_id, "has been sent")
+    # print(event_id, "has been sent")
 
     event_id = az.invoke("list containers", bg_callback=count_results, **DEFAULT_VM, query='"[].{name:name}"')
 
