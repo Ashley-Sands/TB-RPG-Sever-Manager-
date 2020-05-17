@@ -64,7 +64,7 @@ class BaseScalar:
             if d["type"] == self.instance_type:
                 hobj = hostObject.HostObject(0, d["id"], d["ip"], hostObject.HostObject.STATE_INIT)
                 self.instances.append(hobj)
-                # TODO: request the instances status
+                self.request_az_instance_status( hobj )
 
     def request_az_instance_status( self, host_obj ):
         """ virtual
