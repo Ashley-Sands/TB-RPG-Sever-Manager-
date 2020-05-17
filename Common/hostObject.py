@@ -10,7 +10,13 @@ class HostObject:
     STATE_ALLOCATED = 2
     STATE_SHUTDOWN = 3
 
+    STATUS_FAILED   = -1
+    STATUS_INACTIVE = 0
+    STATUS_RUNNING  = 1
+
     def __init__( self, host_id ):
+
+        self.azure_id = ""
 
         self.id = host_id
         self.host_address = None

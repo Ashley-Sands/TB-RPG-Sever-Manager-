@@ -1,4 +1,5 @@
 import Common.azCommands as azCommands
+import Common.hostObject as hostObject
 import time
 import threading
 
@@ -12,18 +13,55 @@ class BaseScalar:
         self.instances = []                             # list of host objects
 
         self.init_commands()
+        self.update_instances()
 
         self.thread_lock = threading.Lock()
         self.update_thread = threading.Thread( target=self.update )
         self.update_thread.start()
         self.cancel_update = False
 
+        self.instances_request_id = -1      # < 0 == no pending request
+        self.instance_status_request = {}   # key event id, requested status host object
+
     def init_commands( self ):
         """ virtual
-            Functions to override to initialize command strings
+            Must contain at least add, remove, list and status
         """
         # TODO: for now this will just use az_command.add, i should add an addJson version az_command
-        pass
+        raise NotImplementedError()
+
+    def request_az_instances( self ):
+        """ request a list of instances from azure. (to be processed in process_az_instances)
+            each result must contain azure_id, ip, status
+            ie. az ... --query "[].{azure_id:id, ip:privateIp, status:state}" -o json ...
+        """
+
+        if self.instances_request_id < 0:   # only request if there's no pending request to be returned.
+            self.instances_request_id = self.az_commands.invoke("list", background=True, bg_callback=self.process_az_instances)[0]
+        else:
+            print("Warning: Unable to request a list of instances from azure, a request is already pending")
+
+    def process_az_instances( self, event_id, data ):
+        """Virtual: Processes the data returned by the request_az_instances"""
+        raise NotImplementedError()
+
+    def request_az_instance_status( self, hostObj ):
+        """ virtual
+            request the status of the instances from azure
+            :param azure_id:    azures resource id
+            each result must contain 'status'
+            ie. az ... --query "[].{status:state}" -o json ...
+        """
+
+        if hostObj not in self.instance_status_request.values(): # only request status if there's no pending request waiting to be returned
+            request_id = self.az_commands.invoke("status", background=True, bg_callback=self.process_az_instance_status)[0]
+            self.instance_status_request[request_id] = hostObj
+        else:
+            print("Warning: Unable to request the status of a host object, a request is already pending for the object")
+
+    def process_az_instance_status( self, event_id, data ):
+        """Virtual: Processes the data returned by the request_az_instance_status"""
+        raise NotImplementedError()
 
     def required_instances( self ):
         """ virtual
@@ -57,6 +95,10 @@ class BaseScalar:
             return self.spawn_new_instance()
 
         return False
+
+    def update_instances( self, event_id, data ):
+        """Updates the list of instances from azure"""
+        pass
 
     def update( self ):
         """Main update loop (threaded)"""
