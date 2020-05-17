@@ -15,16 +15,17 @@ class BaseScalar:
         self.max_instances = max_instances
         self.instances = []                             # list of host objects
 
+        self.instances_request_id = -1      # < 0 == no pending request
+        self.instance_status_request = {}   # key event id, requested status host object
+
         self.init_commands()
         self.request_az_instances()
 
+
+        self.cancel_update = False
         self.thread_lock = threading.Lock()
         self.update_thread = threading.Thread( target=self.update )
         self.update_thread.start()
-        self.cancel_update = False
-
-        self.instances_request_id = -1      # < 0 == no pending request
-        self.instance_status_request = {}   # key event id, requested status host object
 
     def init_commands( self ):
         """ virtual
@@ -40,7 +41,10 @@ class BaseScalar:
         """
 
         if self.instances_request_id < 0:   # only request if there's no pending request to be returned.
-            self.instances_request_id = self.az_commands.invoke("list", background=True, bg_callback=self.process_az_instances)[0]
+            self.instances_request_id = self.az_commands.invoke("list",
+                                                                background=True,
+                                                                bg_callback=self.process_az_instances,
+                                                                query="'[].{id:id, ip:ipAddress.ip, image:containers[0].image, status:provisioningState}'")[0]
         else:
             print("Warning: Unable to request a list of instances from azure, a request is already pending")
 
@@ -51,7 +55,7 @@ class BaseScalar:
 
         print("Instances data", data)
 
-        if len( data ) == 0:
+        if data is None or len( data ) == 0:
             print("No instances found")
             return
 
