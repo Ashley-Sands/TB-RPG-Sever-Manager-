@@ -34,21 +34,6 @@ def get_sys_argv():
     print(argvs)
     return argvs
 
-def event_compleat(event_id, data):
-
-    print(event_id, ":", data)
-
-def count_results(event_id, data):
-
-    if data and len( data ) > 0:
-        event_id = az.invoke( "show containers", background=True, bg_callback=event_compleat, **DEFAULT_VM,
-                              query='"[].{name:name, location:location, ip:ipAddress.ip, image:containers[0].image, '
-                                    'state:containers[0].instanceView.state, p_state:provisioningState, tags:tags}"' )
-
-        print( event_id, "has been sent" )
-    else:
-        print("No Results for event:", event_id)
-
 
 if __name__ == "__main__":
 
