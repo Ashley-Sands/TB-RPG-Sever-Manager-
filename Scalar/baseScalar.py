@@ -66,23 +66,35 @@ class BaseScalar:
                 self.instances.append(hobj)
                 # TODO: request the instances status
 
-    def request_az_instance_status( self, hostObj ):
+    def request_az_instance_status( self, host_obj ):
         """ virtual
             request the status of the instances from azure
-            :param azure_id:    azures resource id
+            :param host_obj:    host object to update
             each result must contain 'status'
             ie. az ... --query "[].{status:state}" -o json ...
         """
 
-        if hostObj not in self.instance_status_request.values(): # only request status if there's no pending request waiting to be returned
-            request_id = self.az_commands.invoke("status", background=True, bg_callback=self.process_az_instance_status)[0]
-            self.instance_status_request[request_id] = hostObj
+        if host_obj not in self.instance_status_request.values(): # only request status if there's no pending request waiting to be returned
+            request_id = self.az_commands.invoke("status",
+                                                 background=True,
+                                                 bg_callback=self.process_az_instance_status,
+                                                 ids=host_obj.azure_id,
+                                                 query="{status:instanceView.state}")[0]
+
+            self.instance_status_request[request_id] = host_obj
         else:
             print("Warning: Unable to request the status of a host object, a request is already pending for the object")
 
     def process_az_instance_status( self, event_id, data ):
         """Virtual: Processes the data returned by the request_az_instance_status"""
-        raise NotImplementedError()
+
+        if event_id not in self.instance_status_request:
+            return
+
+        if data["status"] == "running":
+            self.instance_status_request[ event_id ].status = hostObject.HostObject.STATUS_RUNNING
+        else:
+            self.instance_status_request[ event_id ].status = hostObject.HostObject.STATUS_INACTIVE
 
     def required_instances( self ):
         """ virtual

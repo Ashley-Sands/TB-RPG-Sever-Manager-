@@ -45,6 +45,6 @@ if __name__ == "__main__":
         inp = input("y to exit")
 
     for i in lobbies.instances:
-        print(i.azure_id)
+        print("-------", i.azure_id, i.ip, i.status)
 
     lobbies.cancel_update = True

@@ -11,3 +11,6 @@ class LobbyScalar( baseScalar.BaseScalar ):
                                      "--resource-group rpg_network_we "
                                      "--query {} "
                                      "--output json")
+        self.az_commands.add("status", "az container show "
+                                       "--ids {}"
+                                       "--query {}" )

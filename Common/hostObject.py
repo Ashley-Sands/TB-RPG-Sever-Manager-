@@ -22,6 +22,7 @@ class HostObject:
         self.host_address = host_addr
 
         self.state = state
+        self.status = HostObject.STATUS_INACTIVE
 
     def complete_setup( self, host_address ):
 
