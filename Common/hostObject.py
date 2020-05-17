@@ -14,14 +14,14 @@ class HostObject:
     STATUS_INACTIVE = 0
     STATUS_RUNNING  = 1
 
-    def __init__( self, host_id ):
+    def __init__( self, host_id, az_id="", host_addr=None, state=STATE_INIT ):
 
-        self.azure_id = ""
+        self.azure_id = az_id
 
-        self.id = host_id
-        self.host_address = None
+        self.id = host_id   # ?? needed?? or just use it for the request id
+        self.host_address = host_addr
 
-        self.state = HostObject.STATE_INIT
+        self.state = state
 
     def complete_setup( self, host_address ):
 

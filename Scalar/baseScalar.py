@@ -5,15 +5,18 @@ import threading
 
 class BaseScalar:
 
-    def __init__( self , update_interval=60, max_instances=1):
+    def __init__( self , type_name, update_interval=60, max_instances=1):
 
         self.az_commands = azCommands.AzCommands()
         self.update_intervals = update_interval         # sec
+
+        self.instance_type = type_name
+
         self.max_instances = max_instances
         self.instances = []                             # list of host objects
 
         self.init_commands()
-        self.update_instances()
+        self.request_az_instances()
 
         self.thread_lock = threading.Lock()
         self.update_thread = threading.Thread( target=self.update )
@@ -32,8 +35,8 @@ class BaseScalar:
 
     def request_az_instances( self ):
         """ request a list of instances from azure. (to be processed in process_az_instances)
-            each result must contain azure_id, ip, status
-            ie. az ... --query "[].{azure_id:id, ip:privateIp, status:state}" -o json ...
+            each result must contain azure_id, ip, status and type
+            ie. az ... --query "[].{azure_id:id, ip:privateIp, status:state, type:image}" -o json ...
         """
 
         if self.instances_request_id < 0:   # only request if there's no pending request to be returned.
@@ -42,8 +45,22 @@ class BaseScalar:
             print("Warning: Unable to request a list of instances from azure, a request is already pending")
 
     def process_az_instances( self, event_id, data ):
-        """Virtual: Processes the data returned by the request_az_instances"""
-        raise NotImplementedError()
+        """Processes the data returned by the request_az_instances"""
+        # ATM this can only be run once
+        # TODO: add update instances
+
+        print("Instances data", data)
+
+        if len( data ) == 0:
+            print("No instances found")
+            return
+
+        # process the data only extracting the data that we need.
+        for d in data:
+            if d["type"] == self.instance_type:
+                hobj = hostObject.HostObject(0, d["id"], d["ip"], hostObject.HostObject.STATE_INIT)
+                self.instances.append(hobj)
+                # TODO: request the instances status
 
     def request_az_instance_status( self, hostObj ):
         """ virtual

@@ -22,4 +22,25 @@
 
 az vm create -g RPG_Network_WE -n MASTER-mariadb --tags MNetwork=RPG dbType=Master --size standard_b1s --location westeurope --vnet-name VNet-WE --subnet db-net --image ubuntults
 
- 
+     az = azCommands.AzCommands()
+
+    # setup the commands
+
+    # resource groups
+    az.add("new group", "az group create --name {} --location {} --tags {}")
+
+    # vms
+    az.add("new vm", "az vm create --name {} --resource-group {} -p --location {} --size {Standard_b1s} --image {UbuntuLTS} --tags {}")
+    az.add("list vms", 'az vm show -d --ids $(az vm list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
+
+    # containers
+    az.add("new container", "az container create --resource-group {} --size {} --tags {}")
+    az.add("list containers", "az container list --resource-group {} --query {} --output {json}")
+    az.add("show containers", 'az container show --ids $(az container list --resource-group {} --query "[].id" -o tsv) --query {} --output {json}')
+
+    # add some aliases
+    az.add_param_alias("new vm", "resource-group", "group")
+    az.add_param_alias("list vms", "resource-group", "group")
+    az.add_param_alias("new container", "resource-group", "group")
+    az.add_param_alias("list containers", "resource-group", "group")
+    az.add_param_alias("show containers", "resource-group", "group")
