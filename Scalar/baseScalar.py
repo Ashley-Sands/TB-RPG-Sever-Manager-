@@ -44,7 +44,7 @@ class BaseScalar:
             self.instances_request_id = self.az_commands.invoke("list",
                                                                 background=True,
                                                                 bg_callback=self.process_az_instances,
-                                                                query="'[].{id:id, ip:ipAddress.ip, image:containers[0].image, status:provisioningState}'")[0]
+                                                                query="'[].{id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
         else:
             print("Warning: Unable to request a list of instances from azure, a request is already pending")
 
