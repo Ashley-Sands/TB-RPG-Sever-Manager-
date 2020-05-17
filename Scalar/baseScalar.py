@@ -13,10 +13,11 @@ class BaseScalar:
         self.instance_type = type_name
 
         self.max_instances = max_instances
+        self.next_host_id = 0
         self.instances = []                             # list of host objects
 
         self.instances_request_id = -1      # < 0 == no pending request
-        self.instance_status_request = {}   # key event id, requested status host object
+        self.active_request = {}   # key event id, requested status host object
 
         self.init_commands()
         self.request_az_instances()
@@ -62,9 +63,12 @@ class BaseScalar:
         # process the data only extracting the data that we need.
         for d in data:
             if d["type"] == self.instance_type:
-                hobj = hostObject.HostObject(0, d["id"], d["ip"], hostObject.HostObject.STATE_INIT)
+                hobj = hostObject.HostObject(self.next_host_id, d["id"], d["ip"], hostObject.HostObject.STATE_INIT)
                 self.instances.append(hobj)
                 self.request_az_instance_status( hobj )
+                self.next_host_id += 1
+
+        self.instances_request_id = -1  # reset the instance_request_id
 
     def request_az_instance_status( self, host_obj ):
         """ virtual
@@ -74,27 +78,29 @@ class BaseScalar:
             ie. az ... --query "[].{status:state}" -o json ...
         """
 
-        if host_obj not in self.instance_status_request.values(): # only request status if there's no pending request waiting to be returned
+        if host_obj not in self.active_request.values(): # only request status if there's no pending request waiting to be returned
             request_id = self.az_commands.invoke("status",
                                                  background=True,
                                                  bg_callback=self.process_az_instance_status,
                                                  ids=host_obj.azure_id,
                                                  query="{status:instanceView.state}")[0]
 
-            self.instance_status_request[request_id] = host_obj
+            self.active_request[request_id ] = host_obj
         else:
             print("Warning: Unable to request the status of a host object, a request is already pending for the object")
 
-    def process_az_instance_status( self, event_id, data ):
+    def process_az_instance_status( self, request_id, data ):
         """Virtual: Processes the data returned by the request_az_instance_status"""
 
-        if event_id not in self.instance_status_request:
+        if request_id not in self.active_request:
             return
 
         if data["status"].lower() == "running":
-            self.instance_status_request[ event_id ].status = hostObject.HostObject.STATUS_RUNNING
+            self.active_request[ request_id ].status = hostObject.HostObject.STATUS_RUNNING
         else:
-            self.instance_status_request[ event_id ].status = hostObject.HostObject.STATUS_INACTIVE
+            self.active_request[ request_id ].status = hostObject.HostObject.STATUS_INACTIVE
+
+        del self.active_request[ request_id ]    # remove the pending event
 
     def required_instances( self ):
         """ virtual
@@ -107,12 +113,12 @@ class BaseScalar:
         """virtual: can spawn a new instance and stay within the max instance limits"""
         return len( self.instances ) < self.max_instances
 
-    def spawn_new_instance( self ):
-        """ virtual
-            Spawns a new instances
-            :return: true if successful otherwise false
-        """
-        return False
+    def request_new_instance( self ):
+        """ request a new instances """
+        raise NotImplementedError()
+
+    def process_new_instance( self, event_id, data ):
+        raise NotImplementedError()
 
     def destroy_instance( self ):
         """ virtual
@@ -125,7 +131,7 @@ class BaseScalar:
     def __spawn_instances( self ):
 
         if self.can_spawn():
-            return self.spawn_new_instance()
+            return self.request_new_instance()
 
         return False
 
@@ -141,8 +147,12 @@ class BaseScalar:
             instances_dif = self.required_instances() - len(self.instances)
 
             if instances_dif > 0:
+                print("create instance")
                 self.__spawn_instances()
             elif instances_dif < 0:
+                print("destroy instance")
                 self.destroy_instance()
+            else:
+                print("We're good for now")
 
             time.sleep( self.update_intervals )
