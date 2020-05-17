@@ -64,7 +64,7 @@ class BaseScalar:
             if d["type"] == self.instance_type:
                 hobj = hostObject.HostObject(0, d["id"], d["ip"], hostObject.HostObject.STATE_INIT)
                 self.instances.append(hobj)
-                self.request_az_instance_status( self.instances[ len(self.instances) ] )
+                self.request_az_instance_status( hobj )
 
     def request_az_instance_status( self, host_obj ):
         """ virtual
@@ -91,7 +91,7 @@ class BaseScalar:
         if event_id not in self.instance_status_request:
             return
 
-        if data["status"] == "running":
+        if data["status"].lower() == "running":
             self.instance_status_request[ event_id ].status = hostObject.HostObject.STATUS_RUNNING
         else:
             self.instance_status_request[ event_id ].status = hostObject.HostObject.STATUS_INACTIVE
