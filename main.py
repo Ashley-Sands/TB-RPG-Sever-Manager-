@@ -1,4 +1,4 @@
-import json, os, sys, subprocess, re
+import json, os, sys, subprocess, re, time
 import Common.azCommands as azCommands
 import Scalar.lobbyScalar as lobbyScalar
 import Common.globals as global_config
@@ -37,8 +37,11 @@ def get_sys_argv():
 
 if __name__ == "__main__":
 
-    lobbies = lobbyScalar.LobbyScalar("gizzmo123456/game_server:server_lobby-1.0")
+    lobbies = lobbyScalar.LobbyScalar("gizzmo123456/game_server:server_lobby-1.0", update_interval=1)
 
-    input("Hit enter to exit")
+    inp = ""
+
+    while inp != "y":
+        inp = input("y to exit")
 
     lobbies.cancel_update = True
