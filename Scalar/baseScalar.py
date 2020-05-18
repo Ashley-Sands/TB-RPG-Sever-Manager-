@@ -12,8 +12,9 @@ class BaseScalar:
 
         self.instance_type = type_name
 
-        self.max_instances = max_instances
         self.next_host_id = 0
+        self.max_instances = max_instances
+        self.instances_processed = False
         self.instances = []                             # list of host objects
 
         self.instances_request_id = -1      # < 0 == no pending request
@@ -69,6 +70,7 @@ class BaseScalar:
                 self.next_host_id += 1
 
         self.instances_request_id = -1  # reset the instance_request_id
+        self.instances_processed = True
 
     def request_az_instance_status( self, host_obj ):
         """ virtual
@@ -144,15 +146,19 @@ class BaseScalar:
 
         while not self.cancel_update:
 
-            instances_dif = self.required_instances() - len(self.instances)
+            required_instances = self.required_instances()
+            instances_dif = required_instances - len(self.instances)
 
-            if instances_dif > 0:
-                print("create instance")
-                self.__spawn_instances()
-            elif instances_dif < 0:
-                print("destroy instance")
-                self.destroy_instance()
-            else:
-                print("We're good for now")
+            print("Setup Complete:", self.instances_processed, "required ins:", required_instances, "current:", len(self.instances))
+
+            if self.instances_processed:
+                if instances_dif > 0:
+                    print("create instance")
+                    self.__spawn_instances()
+                elif instances_dif < 0:
+                    print("destroy instance")
+                    self.destroy_instance()
+                else:
+                    print("We're good for now")
 
             time.sleep( self.update_intervals )
