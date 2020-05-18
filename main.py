@@ -37,7 +37,7 @@ def get_sys_argv():
 
 if __name__ == "__main__":
 
-    lobbies = lobbyScalar.LobbyScalar("gizzmo123456/game_server:server_lobby-1.0", update_interval=1)
+    lobbies = lobbyScalar.LobbyScalar("lobbies-cli", "gizzmo123456/game_server:server_lobby-1.0", update_interval=1)
 
     inp = ""
 

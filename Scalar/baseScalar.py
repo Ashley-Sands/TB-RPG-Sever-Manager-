@@ -5,11 +5,12 @@ import threading
 
 class BaseScalar:
 
-    def __init__( self , type_name, update_interval=60, max_instances=1):
+    def __init__( self, base_instance_name, type_name, update_interval=60, max_instances=1):
 
         self.az_commands = azCommands.AzCommands()
         self.update_intervals = update_interval         # sec
 
+        self.instance_name = base_instance_name
         self.instance_type = type_name
 
         self.next_host_id = 0

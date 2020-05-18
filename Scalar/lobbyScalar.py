@@ -3,8 +3,8 @@ import Common.hostObject as hostObject
 
 class LobbyScalar( baseScalar.BaseScalar ):
 
-    def __init__( self, type_name, update_interval=60, max_instances=1 ):
-        super().__init__(type_name, update_interval, max_instances)
+    def __init__( self, base_instance_name, type_name, update_interval=60, max_instances=1 ):
+        super().__init__(base_instance_name, type_name, update_interval, max_instances)
 
     def init_commands( self ):
         self.az_commands.add("list", "az container list "
@@ -39,7 +39,7 @@ class LobbyScalar( baseScalar.BaseScalar ):
         request_id = self.az_commands.invoke( "add",
                                               background=True,
                                               bg_callback=self.process_new_instance,
-                                              name="{0}-{1}".format( self.instance_type.split("/")[1], self.next_host_id ),
+                                              name="{0}-{1}".format( self.instance_name, self.next_host_id ),
                                               image=self.instance_type,
                                               query="'{id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
 
