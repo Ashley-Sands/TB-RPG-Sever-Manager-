@@ -37,11 +37,11 @@ class LobbyScalar( baseScalar.BaseScalar ):
         """ request a new instances """
 
         request_id = self.az_commands.invoke( "add",
-                                 background=True,
-                                 bg_callback=self.process_new_instance,
-                                 name="{0}-{1}".format( self.instance_type.split("/")[1], self.next_host_id ),
-                                 image=self.instance_type,
-                                 query="{id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}")[0]
+                                              background=True,
+                                              bg_callback=self.process_new_instance,
+                                              name="{0}-{1}".format( self.instance_type.split("/")[1], self.next_host_id ),
+                                              image=self.instance_type,
+                                              query="'{id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
 
         # create a new host object
         hobj = hostObject.HostObject(self.next_host_id)
