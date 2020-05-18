@@ -59,6 +59,7 @@ class BaseScalar:
 
         if data is None or len( data ) == 0:
             print("No instances found")
+            self.instances_processed = True
             return
 
         # process the data only extracting the data that we need.
