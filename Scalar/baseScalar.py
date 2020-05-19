@@ -128,13 +128,17 @@ class BaseScalar:
     def process_new_instance( self, event_id, data ):
         raise NotImplementedError()
 
-    def destroy_instance( self ):
+    def request_destroy_instance( self ):
         """ virtual
             destroys any idling (unused) instance
         :return: true if successful otherwise false
         """
 
-        return False
+        raise NotImplementedError()
+
+    def process_destroy_instance( self ):
+        """Virtual: processes remove instance status from azure."""
+        raise NotImplementedError()
 
     def __spawn_instances( self ):
 

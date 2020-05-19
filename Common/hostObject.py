@@ -14,9 +14,10 @@ class HostObject:
     STATUS_INACTIVE = 0
     STATUS_RUNNING  = 1
 
-    def __init__( self, scalar_id, host_type, az_id="", host_addr=None, state=STATE_INIT ):
+    def __init__( self, scalar_id, host_type, az_id="", az_name="", host_addr=None, state=STATE_INIT ):
 
         self.azure_id = az_id
+        self.azure_name = az_name
 
         self.type = host_type
         self.state = state
@@ -25,10 +26,12 @@ class HostObject:
         self.scalar_host_id = scalar_id
         self.host_address = host_addr
 
-    def complete_setup( self, az_id, host_address, state=STATE_IDLE ):
+    def complete_setup( self, az_id, az_name, host_address, state=STATE_IDLE ):
 
+        self.azure_id = az_id
+        self.azure_name = az_name
         self.host_address = host_address
-        self.state = HostObject.STATE_IDLE
+        self.state = state
 
     def is_active( self ):
         return self.host_address is not None

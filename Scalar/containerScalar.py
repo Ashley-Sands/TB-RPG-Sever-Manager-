@@ -48,7 +48,7 @@ class LobbyScalar( baseScalar.BaseScalar ):
                                               name="{0}-{1}".format( self.instance_name, self.next_host_id ),
                                               registrypassword=self.docker_auth,
                                               image=self.scalar_type,
-                                              query="'{id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
+                                              query="'{id:id, name:name, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
 
         # create a new host object
         hobj = hostObject.HostObject(self.next_host_id, hostObject.HostObject.TYPE_CONTAINER)
@@ -65,7 +65,7 @@ class LobbyScalar( baseScalar.BaseScalar ):
             print(data) # todo Remove
             # update the host object now that the instance has been created
             hobj = self.active_request[ request_id ]
-            hobj.compleat_setup( data["id"], data["ip"] )
+            hobj.compleat_setup( data["id"], data["name"], data["ip"] )
 
             # request a status update
             self.request_az_instance_status( hobj )
