@@ -1,7 +1,8 @@
 import Scalar.baseScalar as baseScalar
 import Common.hostObject as hostObject
 
-class LobbyScalar( baseScalar.BaseScalar ):
+
+class ContainerScalar( baseScalar.BaseScalar ):
 
     def __init__( self, base_instance_name, type_name, update_interval=60, max_instances=1 ):
         super().__init__(base_instance_name, type_name, update_interval, max_instances)
@@ -37,6 +38,11 @@ class LobbyScalar( baseScalar.BaseScalar ):
                                     "--subnet /subscriptions/f3679ebd-da87-4256-9659-f5984d7c156f/resourceGroups/RPG_Network_WE/providers/Microsoft.Network/virtualNetworks/VNet-WE/subnets/container-net "
                                     "--query {}")
 
+        # we must make sure the container is stopped befor deleting it
+        # otherwise it does not run the exit code, ie. delete kills the process immediately
+        self.az_commands.add("remove", "az container stop -g rpg_network_we --name {} && " 
+                                       "az container delete -g rpg_network_we --name {} --yes ")
+
         self.az_commands.add("docker pass", "az keyvault secret show --vault-name rpg-network-services --name docker --query 'value' ")
 
     def request_new_instance( self ):
@@ -70,6 +76,25 @@ class LobbyScalar( baseScalar.BaseScalar ):
             # request a status update
             self.request_az_instance_status( hobj )
 
+            del self.active_request[ request_id ]
+        else:
+            print("Error: Request id ", request_id, "does not exist")
+
+    def request_destroy_instance( self ):
+
+        shutdown_inst = self._deallocate_instance()
+
+        request_id = self.az_commands.invoke("remove",
+                                background=True,
+                                bg_callback=self.process_destroy_instance,
+                                name=shutdown_inst.azure_name )[0]
+
+        self.active_request[ request_id ] = shutdown_inst
+
+    def process_destroy_instance( self, request_id, data ):
+
+        if request_id in self.active_request:
+            self.instances.remove( self.active_request[ request_id ] )
             del self.active_request[ request_id ]
         else:
             print("Error: Request id ", request_id, "does not exist")

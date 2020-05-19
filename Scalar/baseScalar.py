@@ -136,16 +136,24 @@ class BaseScalar:
 
         raise NotImplementedError()
 
-    def process_destroy_instance( self ):
+    def process_destroy_instance( self, request_id, data ):
         """Virtual: processes remove instance status from azure."""
         raise NotImplementedError()
+
+    def _deallocate_instance( self ):
+        """ Finds and deallocates an instance
+            :return: the deallocated instance
+        """
+
+        for i in self.instances:
+            if i.can_shutdown():
+                i.shutdown()
+                return i
 
     def __spawn_instances( self ):
 
         if self.can_spawn():
-            return self.request_new_instance()
-
-        return False
+            self.request_new_instance()
 
     def update_instances( self, event_id, data ):
         """Updates the list of instances from azure"""

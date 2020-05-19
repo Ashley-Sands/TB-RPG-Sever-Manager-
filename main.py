@@ -1,6 +1,6 @@
 import json, os, sys, subprocess, re, time
 import Common.azCommands as azCommands
-import Scalar.lobbyScalar as lobbyScalar
+import Scalar.containerScalar as containerScalar
 import Common.globals as global_config
 consts = global_config.Global
 
@@ -37,7 +37,7 @@ def get_sys_argv():
 
 if __name__ == "__main__":
 
-    lobbies = lobbyScalar.LobbyScalar("lobbies-cli", "gizzmo123456/game_server:server_lobby-1.0", update_interval=1)
+    lobbies = containerScalar.ContainerScalar("lobbies-cli", "gizzmo123456/game_server:server_lobby-1.0", update_interval=1)
 
     inp = ""
 
