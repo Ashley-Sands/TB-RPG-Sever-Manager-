@@ -6,7 +6,7 @@ class LobbyScalar( baseScalar.BaseScalar ):
     def __init__( self, base_instance_name, type_name, update_interval=60, max_instances=1 ):
         super().__init__(base_instance_name, type_name, update_interval, max_instances)
 
-        self.instance_type = hostObject.HostObject.TYPE_CONTAINER
+        self.scalar_type = hostObject.HostObject.TYPE_CONTAINER
         self.docker_auth = self.az_commands.invoke("docker pass", background=False)[1]
 
 
@@ -47,7 +47,7 @@ class LobbyScalar( baseScalar.BaseScalar ):
                                               bg_callback=self.process_new_instance,
                                               name="{0}-{1}".format( self.instance_name, self.next_host_id ),
                                               registrypassword=self.docker_auth,
-                                              image=self.instance_type,
+                                              image=self.scalar_type,
                                               query="'{id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
 
         # create a new host object

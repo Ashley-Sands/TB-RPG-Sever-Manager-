@@ -14,7 +14,7 @@ class BaseScalar:
         self.instance_type = type_name
 
         self.next_host_id = 0
-        self.instance_type = hostObject.HostObject.TYPE_UNDEFINED
+        self.scalar_type = hostObject.HostObject.TYPE_UNDEFINED
         self.max_instances = max_instances
         self.instances_processed = False
         self.instances = []                             # list of host objects
@@ -53,7 +53,7 @@ class BaseScalar:
 
     def process_az_instances( self, event_id, data ):
         """Processes the data returned by the request_az_instances"""
-        # ATM this can only be run once
+        # Warning this can only be run once atm else it will overwrite the current host list
         # TODO: add update instances
 
         print("Instances data", data)
@@ -67,7 +67,7 @@ class BaseScalar:
         for d in data:
             if d["type"] == self.instance_type:
                 hobj = hostObject.HostObject(self.next_host_id,
-                                             self.instance_type,
+                                             self.scalar_type,
                                              az_id=d["id"],
                                              host_addr=d["ip"],
                                              state=hostObject.HostObject.STATE_INIT)
