@@ -167,7 +167,7 @@ class BaseScalar:
                     self.__spawn_instances()
                 elif instances_dif < 0:
                     print("destroy instance")
-                    self.destroy_instance()
+                    self.request_destroy_instance()
                 else:
                     print("We're good for now")
 
