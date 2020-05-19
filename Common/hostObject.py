@@ -25,7 +25,7 @@ class HostObject:
         self.scalar_host_id = scalar_id
         self.host_address = host_addr
 
-    def complete_setup( self, host_address ):
+    def complete_setup( self, az_id, host_address, state=STATE_IDLE ):
 
         self.host_address = host_address
         self.state = HostObject.STATE_IDLE

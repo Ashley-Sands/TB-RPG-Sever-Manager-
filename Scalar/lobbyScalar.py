@@ -59,7 +59,17 @@ class LobbyScalar( baseScalar.BaseScalar ):
         self.next_host_id += 1
 
 
-    def process_new_instance( self, event_id, data ):
+    def process_new_instance( self, request_id, data ):
         """"""
+        if request_id in self.active_request:
+            print(data) # todo Remove
+            # update the host object now that the instance has been created
+            hobj = self.active_request[ request_id ]
+            hobj.compleat_setup( data["id"], data["ip"] )
 
-        print(data)
+            # request a status update
+            self.request_az_instance_status( hobj )
+
+            del self.active_request[ request_id ]
+        else:
+            print("Error: Request id ", request_id, "does not exist")

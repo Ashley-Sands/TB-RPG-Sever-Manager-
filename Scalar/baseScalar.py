@@ -93,7 +93,7 @@ class BaseScalar:
                                                  ids=host_obj.azure_id,
                                                  query="{status:instanceView.state}")[0]
 
-            self.active_request[request_id ] = host_obj
+            self.active_request[ request_id ] = host_obj
         else:
             print("Warning: Unable to request the status of a host object, a request is already pending for the object")
 
