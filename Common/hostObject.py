@@ -1,9 +1,9 @@
 
 class HostObject:
 
-    TYPE_PROXY = 0
+    TYPE_UNDEFINED = -1
+    TYPE_VM = 0
     TYPE_CONTAINER = 1
-    TYPE_DB = 2
 
     STATE_INIT = 0
     STATE_IDLE = 1
@@ -14,15 +14,16 @@ class HostObject:
     STATUS_INACTIVE = 0
     STATUS_RUNNING  = 1
 
-    def __init__( self, host_id, az_id="", host_addr=None, state=STATE_INIT ):
+    def __init__( self, scalar_id, host_type, az_id="", host_addr=None, state=STATE_INIT ):
 
         self.azure_id = az_id
 
-        self.id = host_id   # ?? needed?? or just use it for the request id
-        self.host_address = host_addr
-
+        self.type = host_type
         self.state = state
         self.status = HostObject.STATUS_INACTIVE
+
+        self.scalar_host_id = scalar_id
+        self.host_address = host_addr
 
     def complete_setup( self, host_address ):
 

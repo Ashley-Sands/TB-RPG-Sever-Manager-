@@ -6,6 +6,7 @@ class LobbyScalar( baseScalar.BaseScalar ):
     def __init__( self, base_instance_name, type_name, update_interval=60, max_instances=1 ):
         super().__init__(base_instance_name, type_name, update_interval, max_instances)
 
+        self.instance_type = hostObject.HostObject.TYPE_CONTAINER
         self.docker_auth = self.az_commands.invoke("docker pass", background=False)[1]
 
 
@@ -50,7 +51,7 @@ class LobbyScalar( baseScalar.BaseScalar ):
                                               query="'{id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
 
         # create a new host object
-        hobj = hostObject.HostObject(self.next_host_id)
+        hobj = hostObject.HostObject(self.next_host_id, hostObject.HostObject.TYPE_CONTAINER)
 
         self.active_request[ request_id ] = hobj
         self.instances.append( hobj )

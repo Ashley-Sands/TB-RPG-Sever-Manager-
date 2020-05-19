@@ -14,6 +14,7 @@ class BaseScalar:
         self.instance_type = type_name
 
         self.next_host_id = 0
+        self.instance_type = hostObject.HostObject.TYPE_UNDEFINED
         self.max_instances = max_instances
         self.instances_processed = False
         self.instances = []                             # list of host objects
@@ -23,7 +24,6 @@ class BaseScalar:
 
         self.init_commands()
         self.request_az_instances()
-
 
         self.cancel_update = False
         self.thread_lock = threading.Lock()
@@ -66,7 +66,11 @@ class BaseScalar:
         # process the data only extracting the data that we need.
         for d in data:
             if d["type"] == self.instance_type:
-                hobj = hostObject.HostObject(self.next_host_id, d["id"], d["ip"], hostObject.HostObject.STATE_INIT)
+                hobj = hostObject.HostObject(self.next_host_id,
+                                             self.instance_type,
+                                             az_id=d["id"],
+                                             host_addr=d["ip"],
+                                             state=hostObject.HostObject.STATE_INIT)
                 self.instances.append(hobj)
                 self.request_az_instance_status( hobj )
                 self.next_host_id += 1
