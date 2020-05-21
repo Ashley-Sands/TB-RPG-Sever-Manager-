@@ -6,7 +6,6 @@ import threading
 class BaseScalar:
 
     def __init__( self, base_instance_name, type_name, update_interval=60, max_instances=1):
-
         self.az_commands = azCommands.AzCommands()
         self.update_intervals = update_interval         # sec
 
@@ -179,6 +178,7 @@ class BaseScalar:
             instances_dif = required_instances - len(self.instances)
 
             print("Setup Complete:", self.instances_processed, "required ins:", required_instances, "current:", len(self.instances))
+            self.print_instance_states()
 
             if self.instances_processed:
                 if instances_dif > 0:
@@ -192,3 +192,12 @@ class BaseScalar:
                     print("We're good for now")
 
             time.sleep( self.update_intervals )
+
+    def print_instance_states( self ):
+
+        print("-"*49,)
+        print(" INIT", " "*6, "| ", self.get_instance_state_count(hostObject.HostObject.STATE_INIT), sep="")
+        print(" IDLE", " "*6, "| ", self.get_instance_state_count(hostObject.HostObject.STATE_IDLE), sep="")
+        print(" ALLOCATED", " "*1, "| ", self.get_instance_state_count(hostObject.HostObject.STATE_ALLOCATED), sep="")
+        print(" SHUTDOWN", " "*2, "| ", self.get_instance_state_count(hostObject.HostObject.STATE_SHUTDOWN), sep="")
+        print("-"*49)
