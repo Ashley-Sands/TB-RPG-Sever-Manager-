@@ -11,7 +11,7 @@ class BaseScalar:
         self.update_intervals = update_interval         # sec
 
         self.instance_name = base_instance_name
-        self.instance_type = type_name
+        self.instance_type = type_name              # ig the image name
 
         self.next_host_id = 0
         self.scalar_type = hostObject.HostObject.TYPE_UNDEFINED
