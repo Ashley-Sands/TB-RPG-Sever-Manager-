@@ -37,17 +37,27 @@ class BaseScalar:
         # TODO: for now this will just use az_command.add, i should add an addJson version az_command
         raise NotImplementedError()
 
+    def get_instance_state_count( self, state ):
+
+        count = 0
+
+        for i in self.instances:
+            if i.state == state:
+                count += 1
+
+        return count
+
     def request_az_instances( self ):
         """ request a list of instances from azure. (to be processed in process_az_instances)
             each result must contain azure_id, ip, status and type
-            ie. az ... --query "[].{azure_id:id, ip:privateIp, status:state, type:image}" -o json ...
+            ie. az ... --query "[].{name:name, azure_id:id, ip:privateIp, status:state, type:image}" -o json ...
         """
 
         if self.instances_request_id < 0:   # only request if there's no pending request to be returned.
             self.instances_request_id = self.az_commands.invoke("list",
                                                                 background=True,
                                                                 bg_callback=self.process_az_instances,
-                                                                query="'[].{id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
+                                                                query="'[].{name:name, id:id, ip:ipAddress.ip, type:containers[0].image, status:provisioningState}'")[0]
         else:
             print("Warning: Unable to request a list of instances from azure, a request is already pending")
 
@@ -69,8 +79,9 @@ class BaseScalar:
                 hobj = hostObject.HostObject(self.next_host_id,
                                              self.scalar_type,
                                              az_id=d["id"],
+                                             az_name=d[ "name" ],
                                              host_addr=d["ip"],
-                                             state=hostObject.HostObject.STATE_INIT)
+                                             state=hostObject.HostObject.STATE_IDLE)
                 self.instances.append(hobj)
                 self.request_az_instance_status( hobj )
                 self.next_host_id += 1
@@ -174,7 +185,8 @@ class BaseScalar:
                 if instances_dif > 0:
                     print("create instance")
                     self.__spawn_instances()
-                elif instances_dif < 0:
+                elif instances_dif < 0 and \
+                     abs(instances_dif) - self.get_instance_state_count(hostObject.HostObject.STATE_SHUTDOWN) > 0:  # todo this needs improving
                     print("destroy instance")
                     self.request_destroy_instance()
                 else:
