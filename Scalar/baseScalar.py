@@ -157,7 +157,6 @@ class BaseScalar:
         """
 
         for i in self.instances:
-            return i
             if i.can_shutdown():
                 i.shutdown()
                 return i
