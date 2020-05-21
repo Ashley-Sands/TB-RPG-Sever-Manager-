@@ -84,6 +84,10 @@ class ContainerScalar( baseScalar.BaseScalar ):
 
         shutdown_inst = self._deallocate_instance()
 
+        if shutdown_inst is None:
+            print("Unable to remove an instance, none available to shutdown")
+            return
+
         request_id = self.az_commands.invoke("remove",
                                 background=True,
                                 bg_callback=self.process_destroy_instance,
